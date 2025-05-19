@@ -7,6 +7,7 @@ import com.example.scheduler.entity.User;
 import com.example.scheduler.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class UserController {
 
     // 유저 생성
     @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto requestDto) {
         UserResponseDto responseDto = userService.createUser(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
@@ -64,7 +65,7 @@ public class UserController {
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(
-            @RequestBody LoginRequestDto requestDto,
+            @Valid @RequestBody LoginRequestDto requestDto,
             HttpServletRequest request,
             HttpServletResponse response
             ) {

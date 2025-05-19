@@ -5,6 +5,7 @@ import com.example.scheduler.dto.schedule.ScheduleResponseDto;
 import com.example.scheduler.service.ScheduleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class ScheduleController {
 
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> createSchedule(
-            @RequestBody ScheduleRequestDto requestDto,
+            @Valid @RequestBody ScheduleRequestDto requestDto,
             HttpServletRequest request) {
 
         HttpSession session = request.getSession(false);
@@ -49,7 +50,7 @@ public class ScheduleController {
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> updateSchedule(
             @PathVariable Long id,
-            @RequestBody ScheduleRequestDto requestDto,
+            @Valid @RequestBody ScheduleRequestDto requestDto,
             HttpServletRequest request) {
 
         HttpSession session = request.getSession(false);
