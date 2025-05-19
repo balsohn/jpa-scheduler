@@ -1,9 +1,13 @@
 package com.example.scheduler.service;
 
+import com.example.scheduler.dto.user.LoginRequestDto;
 import com.example.scheduler.dto.user.UserRequestDto;
 import com.example.scheduler.dto.user.UserResponseDto;
 import com.example.scheduler.entity.User;
 import com.example.scheduler.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,5 +73,22 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다. " + id));
 
         userRepository.delete(user);
+    }
+
+    // 로그인
+    public void login(LoginRequestDto requestDto, HttpServletRequest request, HttpServletResponse response) {
+        // 사용자 확인
+        User user = userRepository.findByEmail(requestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("등록된 사용자가 없습니다."));
+
+        // 비밀번호 확인
+        if (!user.getPassword().equals(requestDto.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // 세션 생성 및 사용자 정보 저장
+        HttpSession session = request.getSession(true);
+        session.setAttribute("userId", user.getId());
+        session.setAttribute("username", user.getUsername());
     }
 }

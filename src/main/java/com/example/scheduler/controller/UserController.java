@@ -1,8 +1,12 @@
 package com.example.scheduler.controller;
 
+import com.example.scheduler.dto.user.LoginRequestDto;
 import com.example.scheduler.dto.user.UserRequestDto;
 import com.example.scheduler.dto.user.UserResponseDto;
+import com.example.scheduler.entity.User;
 import com.example.scheduler.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +59,17 @@ public class UserController {
     public ResponseEntity<Map<String, String>> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok(Map.of("msg", "사용자가 삭제되었습니다."));
+    }
+
+    // 로그인
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(
+            @RequestBody LoginRequestDto requestDto,
+            HttpServletRequest request,
+            HttpServletResponse response
+            ) {
+        userService.login(requestDto, request, response);
+        return ResponseEntity.ok(Map.of("msg", "로그인 성공"));
+
     }
 }
