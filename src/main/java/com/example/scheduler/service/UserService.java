@@ -1,5 +1,6 @@
 package com.example.scheduler.service;
 
+import com.example.scheduler.config.PasswordEncoder;
 import com.example.scheduler.dto.user.LoginRequestDto;
 import com.example.scheduler.dto.user.UserRequestDto;
 import com.example.scheduler.dto.user.UserResponseDto;
@@ -18,9 +19,11 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // 유저 생성
@@ -30,7 +33,15 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
-        User user = new User(requestDto.getUsername(), requestDto.getEmail(), requestDto.getPassword());
+        // 사용자명 중복 체크 추가
+        if (userRepository.findByUsername(requestDto.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 사용자명입니다.");
+        }
+
+        // 비밀번호 암호화 적용
+        String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
+
+        User user = new User(requestDto.getUsername(), requestDto.getEmail(), encodedPassword);
         User savedUser = userRepository.save(user);
 
         return new UserResponseDto(savedUser);
@@ -82,7 +93,7 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("등록된 사용자가 없습니다."));
 
         // 비밀번호 확인
-        if (!user.getPassword().equals(requestDto.getPassword())) {
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
