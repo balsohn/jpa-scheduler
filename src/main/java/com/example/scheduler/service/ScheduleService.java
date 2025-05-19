@@ -54,4 +54,17 @@ public class ScheduleService {
         schedule.update(requestDto.getTitle(), requestDto.getContent());
         return new ScheduleResponseDto(schedule);
     }
+
+    // 일정 삭제
+    public void deleteSchedule(Long id, String username) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("일정을 찾을 수 없습니다. " + id));
+
+        // 작성자만 삭제 가능
+        if (!schedule.getUsername().equals(username)) {
+            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+        }
+
+        scheduleRepository.delete(schedule);
+    }
 }

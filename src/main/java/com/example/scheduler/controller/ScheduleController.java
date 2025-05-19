@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/schedules")
@@ -47,6 +48,11 @@ public class ScheduleController {
             @RequestBody ScheduleRequestDto requestDto) {
         ScheduleResponseDto responseDto = scheduleService.updateSchedule(id, requestDto, TEMP_USERNAME);
         return ResponseEntity.ok(responseDto);
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteSchedule(@PathVariable Long id) {
+        scheduleService.deleteSchedule(id, TEMP_USERNAME);
+        return ResponseEntity.ok(Map.of("msg", "일정이 삭제되었습니다."));
     }
 }
