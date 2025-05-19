@@ -21,17 +21,23 @@ public class Schedule extends Timestamped {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private String username;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    public Schedule(String title, String content, String username) {
+    public Schedule(String title, String content, User user) {
         this.title = title;
         this.content = content;
-        this.username = username;
+        this.user = user;
     }
 
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    // 사용자 이름 조회 메서드
+    public String getUsername() {
+        return this.user.getUsername();
     }
 }
