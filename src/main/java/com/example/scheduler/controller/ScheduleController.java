@@ -3,12 +3,12 @@ package com.example.scheduler.controller;
 import com.example.scheduler.dto.ScheduleRequestDto;
 import com.example.scheduler.dto.ScheduleResponseDto;
 import com.example.scheduler.service.ScheduleService;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/schedules")
@@ -27,5 +27,17 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto requestDto) {
         ScheduleResponseDto responseDto = scheduleService.createSchedule(requestDto, TEMP_USERNAME);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ScheduleResponseDto>> getSchedules() {
+        List<ScheduleResponseDto> responseDtos = scheduleService.getSchedules();
+        return ResponseEntity.ok(responseDtos);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ScheduleResponseDto> getSchedule(@PathVariable Long id) {
+        ScheduleResponseDto responseDto = scheduleService.getSchedule(id);
+        return ResponseEntity.ok(responseDto);
     }
 }
