@@ -29,4 +29,9 @@ public class Schedule extends Timestamped {
         this.content = content;
         this.username = username;
     }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
