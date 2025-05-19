@@ -26,7 +26,7 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
-        User user = new User(requestDto.getUsername(), requestDto.getEmail());
+        User user = new User(requestDto.getUsername(), requestDto.getEmail(), requestDto.getPassword());
         User savedUser = userRepository.save(user);
 
         return new UserResponseDto(savedUser);
