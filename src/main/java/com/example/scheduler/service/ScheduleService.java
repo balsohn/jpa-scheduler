@@ -93,8 +93,8 @@ public class ScheduleService {
 
         // DTO로 변환
         return schedulePage.map(schedule -> {
-            long commnetCount = commentRepository.countByScheduleId(schedule.getId());
-            return new SchedulePageResponseDto(schedule, commnetCount);
+            long commentCount = commentRepository.countByScheduleId(schedule.getId());
+            return new SchedulePageResponseDto(schedule, commentCount);
         });
     }
 }
