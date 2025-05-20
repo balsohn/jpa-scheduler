@@ -1,11 +1,14 @@
 package com.example.scheduler.controller;
 
+import com.example.scheduler.dto.schedule.SchedulePageResponseDto;
 import com.example.scheduler.dto.schedule.ScheduleRequestDto;
 import com.example.scheduler.dto.schedule.ScheduleResponseDto;
 import com.example.scheduler.service.ScheduleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -68,5 +71,15 @@ public class ScheduleController {
 
         scheduleService.deleteSchedule(id, username);
         return ResponseEntity.ok(Map.of("msg", "일정이 삭제되었습니다."));
+    }
+
+    @GetMapping("/paging")
+    public ResponseEntity<Page<SchedulePageResponseDto>> getSchedulesWithPaging(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        Page<SchedulePageResponseDto> responseDtos = scheduleService.getSchedulesWithPaging(page, size);
+        return ResponseEntity.ok(responseDtos);
     }
 }

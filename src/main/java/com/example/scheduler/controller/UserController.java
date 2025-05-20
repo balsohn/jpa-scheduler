@@ -3,6 +3,7 @@ package com.example.scheduler.controller;
 import com.example.scheduler.dto.user.LoginRequestDto;
 import com.example.scheduler.dto.user.UserRequestDto;
 import com.example.scheduler.dto.user.UserResponseDto;
+import com.example.scheduler.dto.user.UserUpdateRequestDto;
 import com.example.scheduler.entity.User;
 import com.example.scheduler.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,8 +51,9 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> updateUser(
             @PathVariable Long id,
-            @RequestBody UserRequestDto userRequestDto) {
-        UserResponseDto responseDto = userService.updateUser(id, userRequestDto);
+            @Valid @RequestBody UserUpdateRequestDto requestDto,
+            HttpServletRequest request) {
+        UserResponseDto responseDto = userService.updateUser(id, requestDto, request);
         return ResponseEntity.ok(responseDto);
     }
 

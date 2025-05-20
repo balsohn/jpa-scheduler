@@ -4,6 +4,7 @@ import com.example.scheduler.config.PasswordEncoder;
 import com.example.scheduler.dto.user.LoginRequestDto;
 import com.example.scheduler.dto.user.UserRequestDto;
 import com.example.scheduler.dto.user.UserResponseDto;
+import com.example.scheduler.dto.user.UserUpdateRequestDto;
 import com.example.scheduler.entity.User;
 import com.example.scheduler.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,9 +64,22 @@ public class UserService {
 
     // 유저 수정
     @Transactional
-    public UserResponseDto updateUser(Long id, UserRequestDto requestDto) {
+    public UserResponseDto updateUser(Long id, UserUpdateRequestDto requestDto, HttpServletRequest request) {
+        // 사용자 조회
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다. " + id));
+
+        // 자신의 계정만 수정 가능하도록 체크
+        HttpSession session = request.getSession();
+        String sessionUsername = (String) session.getAttribute("username");
+        if (!user.getUsername().equals(sessionUsername)) {
+            throw new IllegalArgumentException("본인의 계정만 수정할 수 없습니다.");
+        }
+
+        // 현재 비밀번호 확인
+        if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
 
         // 이메일 중복 체크
         userRepository.findByEmail(requestDto.getEmail())
@@ -74,7 +88,14 @@ public class UserService {
                         throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
                     }
                 });
+
         user.update(requestDto.getUsername(), requestDto.getEmail());
+
+        // 새 비밀번호가 입력된 경우 비밀번호 업데이트
+        if (requestDto.getNewPassword() != null && !requestDto.getNewPassword().isEmpty()) {
+            String encodePassword = passwordEncoder.encode(requestDto.getNewPassword());
+            user.updatePassword(encodePassword);
+        }
         return new UserResponseDto(user);
     }
 

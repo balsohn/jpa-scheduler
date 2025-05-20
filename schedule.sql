@@ -1,3 +1,5 @@
+DROP DATABASE scheduler;
+
 CREATE DATABASE IF NOT EXISTS scheduler;
 USE scheduler;
 
@@ -16,6 +18,7 @@ CREATE TABLE IF NOT EXISTS schedules(
     content     TEXT            NOT NULL ,
     user_id     BIGINT          NOT NULL ,
     created_at  DATETIME        NOT NULL ,
+    modified_at DATETIME        NOT NULL ,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
